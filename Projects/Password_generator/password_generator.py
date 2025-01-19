@@ -3,20 +3,14 @@ import secrets
 
 
 def contains_upper(password: str) -> bool:
-    for char in password:
-        if char in string.ascii_uppercase:
-            return True
-    return False
+    return any(char in string.ascii_uppercase for char in password)
 
 
 def contains_symbols(password: str) -> bool:
-    for char in password:
-        if char in string.punctuation:
-            return True
-    return False
+    return any(char in string.punctuation for char in password)
 
 
-def generate_password(parameter: list) -> str:
+def generate_password(parameter: tuple) -> str:
     if parameter[0] < 2:
         raise ValueError("Length cannot be lower than 2")
 
@@ -38,16 +32,16 @@ def generate_password(parameter: list) -> str:
     return "".join(password)
 
 
-def parameters() -> list:
+def parameters() -> tuple:
     length: int = int(input("Enter a length\n>>> "))
-    symbols: bool = bool(input("Do u want symbols? 1 for yes, 0 for no\n>>> "))
-    uppercase: bool = bool(input("Do u want symbols? 1 for yes, 0 for no\n>>> "))
+    symbols: bool = input("Do u want symbols? 1 for yes, 0 for no\n>>> ") == "1"
+    uppercase: bool = input("Do u want uppercase char? 1 for yes, 0 for no\n>>> ") == "1"
     num_passwords: int = int(input("How many passwords do u need?\n>>> "))
-    return [length, symbols, uppercase, num_passwords]
+    return length, symbols, uppercase, num_passwords
 
 
 def main() -> None:
-    parameters_list: list = parameters()
+    parameters_list: tuple = parameters()
     for i in range(1, parameters_list[3] + 1):
         new_pass: str = generate_password(parameters_list)
         specs: str = f"U: {contains_upper(new_pass)}, S: {contains_symbols(new_pass)}"
