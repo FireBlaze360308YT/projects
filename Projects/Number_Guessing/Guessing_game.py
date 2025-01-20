@@ -2,60 +2,63 @@ import random as rm
 import time as tm
 import os
 
-sleep_ = lambda x: tm.sleep(x)
-clear = lambda: os.system('cls')
 
-count: int = 0
+def sleep_(seconds: float) -> None:
+    """Sleep for the given number of seconds."""
+    tm.sleep(seconds)
+
+
+def clear() -> None:
+    """Clear the console screen."""
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+
+def get_valid_input(min_val: int, max_val: int) -> int:
+    """Helper function to get valid user input within the given range."""
+    while True:
+        user_input = input(f"Enter a number between {min_val} and {max_val}: ").strip()
+        if user_input.isdigit() and min_val <= int(user_input) <= max_val:
+            return int(user_input)
+        print(f"Invalid input! Please enter a valid number between {min_val} and {max_val}.")
+        sleep_(0.5)
+        clear()
 
 
 def game(difficulty: int) -> None:
-    global count
+    """Game logic where user guesses a number."""
+    max_number = difficulty ** 4 + 25
     print("##############################################")
-    print(f"As u selected, the maximum number will be {difficulty ** 4 + 25}")
-    print("##############################################")
-    print()
-    random_int: int = rm.randint(0, difficulty ** 4 + 25)
+    print(f"As you selected, the maximum number will be {max_number}")
+    print("##############################################\n")
+
+    random_int = rm.randint(0, max_number)
+    attempts = 0
 
     while True:
-        choice_int: str = input("Enter a number!\n --> ")
+        user_guess = get_valid_input(0, max_number)
+        attempts += 1
 
-        if not choice_int.isdigit() or int(choice_int) > difficulty ** 4 + 25 or int(choice_int) < 0:
-            count += 1
-            print("Invalid answer, try again!\n")
-
-            sleep_(0.25)
-            clear()
-            continue
-        if int(choice_int) < random_int:
-            count += 1
-            print("Too low!\n")
-
-            continue
-        if int(choice_int) > random_int:
-            count += 1
-            print("Too high!\n")
-
-            continue
-        if int(choice_int) == random_int:
-            count += 1
-            print(f"You win in {count} attempts!")
+        if user_guess < random_int:
+            print("Too low! Try again.\n")
+        elif user_guess > random_int:
+            print("Too high! Try again.\n")
+        else:
+            print(f"You win in {attempts} attempts!")
             break
-
-    return None
 
 
 def main() -> None:
+    """Main function to select game difficulty and start the game."""
     while True:
-        game_mode = input("Select difficulty! (1 to 5): ")
-        if not game_mode.isdigit() or not (1 <= int(game_mode) <= 5):
-            print("Invalid answer, try again!\n")
-            sleep_(0.25)
-            clear()
-            continue
-        game(difficulty=int(game_mode))
+        game_mode = input("Select difficulty (1 to 5): ").strip()
+
+        if game_mode.isdigit() and 1 <= int(game_mode) <= 5:
+            game(difficulty=int(game_mode))
+            break
+
+        print("Invalid answer, try again!")
+        sleep_(0.5)
         clear()
-        break
-    return None
 
 
 if __name__ == "__main__":
